@@ -4,6 +4,7 @@ function showPopup(title, bodyContent) {
     document.getElementById('popup-body').innerHTML = bodyContent;
     document.getElementById('popup').style.display = 'flex';
     document.getElementById('popup-btn').textContent = 'ตกลง';
+    document.getElementById('popup-btn').style.display = 'block'; // แสดงปุ่มตกลงเริ่มต้น
 }
 
 // ฟังก์ชันปิด Popup
@@ -21,6 +22,60 @@ function hideLoading() {
     document.getElementById('loading').style.display = 'none';
 }
 
+// ฟังก์ชันสำหรับการ์ดลงนาม
+function showSignCardForm() {
+    const formHTML = `
+        <form id="sign-form" class="sign-form" onsubmit="submitSignForm(event)">
+            <div class="form-group">
+                <label for="photo">อัพโหลดรูปภาพ:</label>
+                <input type="file" id="photo" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="blessing">เลือกคำถวายพระพร:</label>
+                <select id="blessing" required>
+                    <option value="">-- เลือกคำถวายพระพร --</option>
+                    <option value="ขอพระองค์ทรงพระเจริญ">ขอพระองค์ทรงพระเจริญ</option>
+                    <option value="ด้วยเกล้าด้วยกระหม่อม">ด้วยเกล้าด้วยกระหม่อม</option>
+                    <option value="ขอเดชะ">ขอเดชะ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fullname">ชื่อ-นามสกุล:</label>
+                <input type="text" id="fullname" required>
+            </div>
+            <div class="form-group">
+                <label for="affiliation">หน่วยงาน/จังหวัด:</label>
+                <input type="text" id="affiliation" required>
+            </div>
+            <button type="submit" class="popup-btn">ส่งข้อมูล</button>
+        </form>
+    `;
+    showPopup('การ์ดลงนาม', formHTML);
+    document.getElementById('popup-btn').style.display = 'none'; // ซ่อนปุ่มตกลงเริ่มต้น
+}
+
+// ฟังก์ชันจัดการการส่งฟอร์ม
+function submitSignForm(event) {
+    event.preventDefault();
+    showLoading();
+    setTimeout(() => {
+        const photo = document.getElementById('photo').files[0];
+        const blessing = document.getElementById('blessing').value;
+        const fullname = document.getElementById('fullname').value;
+        const affiliation = document.getElementById('affiliation').value;
+
+        console.log({
+            photo: photo ? photo.name : 'ไม่มีรูป',
+            blessing,
+            fullname,
+            affiliation
+        });
+
+        hideLoading();
+        showPopup('สำเร็จ', 'ข้อมูลการลงนามถูกส่งเรียบร้อยแล้ว');
+    }, 1000);
+}
+
 // ฟังก์ชันจัดการการเลือกการ์ด
 function handleCardAction(cardType) {
     showLoading();
@@ -28,7 +83,7 @@ function handleCardAction(cardType) {
         hideLoading();
         switch(cardType) {
             case 'sign':
-                window.location.href = 'sign_card.html'; // Redirect ไปหน้าใหม่
+                showSignCardForm(); // แสดง popup ฟอร์มลงนาม
                 break;
             case 'support':
                 showPopup('การ์ดส่งกำลังใจ', 'ส่งคำพูดให้กำลังใจถึงคนที่คุณรัก');
