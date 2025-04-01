@@ -1,3 +1,27 @@
+// ฟังก์ชันแสดง Popup
+function showPopup(title, bodyContent) {
+    document.getElementById('popup-title').textContent = title;
+    document.getElementById('popup-body').innerHTML = bodyContent;
+    document.getElementById('popup').style.display = 'flex';
+    document.getElementById('popup-btn').textContent = 'ตกลง';
+    document.getElementById('popup-btn').style.display = 'block';
+}
+
+// ฟังก์ชันปิด Popup
+function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+}
+
+// ฟังก์ชันแสดง Loading
+function showLoading() {
+    document.getElementById('loading').style.display = 'flex';
+}
+
+// ฟังก์ชันซ่อน Loading
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+}
+
 // ฟังก์ชันสำหรับปุ่มตั้งค่า (Telegram Settings)
 function openSettings() {
     // ดึงข้อมูล Telegram เดิมจาก localStorage (ถ้ามี)
@@ -41,32 +65,18 @@ function saveTelegramSettings(event) {
 
     setTimeout(() => {
         hideLoading();
-        showPopup('สำเร็จ', 'ตั้งค่า Telegram ถูกบันทึกเรียบร้อยแล้ว');
+        // แสดงข้อมูลที่บันทึกใน popup "สำเร็จ"
+        const successHTML = `
+            <div class="success-content">
+                <div class="success-details">
+                    <p><strong>Telegram ID:</strong> ${telegramId}</p>
+                    <p><strong>Telegram Bot Token:</strong> ${telegramToken}</p>
+                    <p><strong>บันทึกเมื่อ:</strong> ${new Date(telegramData.timestamp).toLocaleString('th-TH')}</p>
+                </div>
+            </div>
+        `;
+        showPopup('สำเร็จ', successHTML);
     }, 1000);
-}
-
-// ฟังก์ชันแสดง Popup
-function showPopup(title, bodyContent) {
-    document.getElementById('popup-title').textContent = title;
-    document.getElementById('popup-body').innerHTML = bodyContent;
-    document.getElementById('popup').style.display = 'flex';
-    document.getElementById('popup-btn').textContent = 'ตกลง';
-    document.getElementById('popup-btn').style.display = 'block';
-}
-
-// ฟังก์ชันปิด Popup
-function closePopup() {
-    document.getElementById('popup').style.display = 'none';
-}
-
-// ฟังก์ชันแสดง Loading
-function showLoading() {
-    document.getElementById('loading').style.display = 'flex';
-}
-
-// ฟังก์ชันซ่อน Loading
-function hideLoading() {
-    document.getElementById('loading').style.display = 'none';
 }
 
 // ฟังก์ชันสำหรับการ์ดลงนาม
@@ -138,7 +148,7 @@ function submitSignForm(event) {
                 <div class="success-details">
                     <p><strong>ขอถวายพระพร:</strong> ${blessing}</p>
                     <p><strong>ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ</strong></p>
-                    <p><strong>ข้าพระุทธเจ้า:</strong> ${fullname}</p>
+                    <p><strong>ข้าพระพุทธเจ้า:</strong> ${fullname}</p>
                     <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
                 </div>
             </div>
@@ -164,7 +174,7 @@ function submitSignForm(event) {
                 <div class="success-details">
                     <p><strong>ขอถวายพระพร:</strong> ${blessing}</p>
                     <p><strong>ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ</strong></p>
-                    <p><strong>ข้าพระุทธเจ้า:</strong> ${fullname}</p>
+                    <p><strong>ข้าพระพุทธเจ้า:</strong> ${fullname}</p>
                     <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
                 </div>
             </div>
@@ -194,8 +204,6 @@ function handleCardAction(cardType) {
         }
     }, 1000);
 }
-
-
 
 // เพิ่ม event listener สำหรับการ์ด
 document.addEventListener('DOMContentLoaded', () => {
