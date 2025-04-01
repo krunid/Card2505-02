@@ -1,8 +1,9 @@
 // ฟังก์ชันแสดง Popup
-function showPopup(title, message) {
+function showPopup(title, bodyContent) {
     document.getElementById('popup-title').textContent = title;
-    document.getElementById('popup-message').textContent = message;
+    document.getElementById('popup-body').innerHTML = bodyContent;
     document.getElementById('popup').style.display = 'flex';
+    document.getElementById('popup-btn').textContent = 'ตกลง';
 }
 
 // ฟังก์ชันปิด Popup
@@ -22,35 +23,31 @@ function hideLoading() {
 
 // ฟังก์ชันจัดการการเลือกการ์ด
 function handleCardAction(cardType) {
-    showLoading(); // แสดง loading
-    setTimeout(() => { // จำลองการโหลด 1 วินาที
+    showLoading();
+    setTimeout(() => {
         hideLoading();
         switch(cardType) {
             case 'sign':
-                showPopup('การ์ดลงนาม', 'กรุณาใส่ข้อความสำหรับลงนาม');
-                // window.location.href = 'sign_card.html';
+                window.location.href = 'sign_card.html'; // Redirect ไปหน้าใหม่
                 break;
             case 'support':
                 showPopup('การ์ดส่งกำลังใจ', 'ส่งคำพูดให้กำลังใจถึงคนที่คุณรัก');
-                // window.location.href = 'support_card.html';
                 break;
             case 'greeting':
                 showPopup('การ์ดอวยพรวันสำคัญ', 'เลือกวันสำคัญและเขียนคำอวยพร');
-                // window.location.href = 'greeting_card.html';
                 break;
             default:
                 console.log('ไม่พบประเภทการ์ด');
         }
-    }, 1000); // หน่วงเวลา 1 วินาที
+    }, 1000);
 }
 
 // ฟังก์ชันสำหรับปุ่มตั้งค่า
 function openSettings() {
-    showLoading(); // แสดง loading
+    showLoading();
     setTimeout(() => {
         hideLoading();
         showPopup('การตั้งค่า', 'คุณสามารถปรับแต่งธีม ฟอนต์ หรืออื่นๆ ได้ที่นี่');
-        // window.location.href = 'settings.html';
     }, 1000);
 }
 
