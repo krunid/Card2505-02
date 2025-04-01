@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การ์ดลงนาม</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">การ์ดออนไลน์</div>
+        <button class="settings-btn" onclick="openSettings()">ตั้งค่า</button>
+    </nav>
+    <div class="container">
+        <h1>การ์ดลงนาม</h1>
+        <form id="sign-form" class="sign-form" onsubmit="submitSignForm(event)">
+            <div class="form-group">
+                <label for="photo">อัพโหลดรูปภาพ:</label>
+                <input type="file" id="photo" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="blessing">เลือกคำถวายพระพร:</label>
+                <select id="blessing" required>
+                    <option value="">-- เลือกคำถวายพระพร --</option>
+                    <option value="ขอพระองค์ทรงพระเจริญ">ขอพระองค์ทรงพระเจริญ</option>
+                    <option value="ด้วยเกล้าด้วยกระหม่อม">ด้วยเกล้าด้วยกระหม่อม</option>
+                    <option value="ขอเดชะ">ขอเดชะ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fullname">ชื่อ-นามสกุล:</label>
+                <input type="text" id="fullname" required>
+            </div>
+            <div class="form-group">
+                <label for="affiliation">หน่วยงาน/จังหวัด:</label>
+                <input type="text" id="affiliation" required>
+            </div>
+            <button type="submit" class="popup-btn">ส่งข้อมูล</button>
+        </form>
+    </div>
+    <!-- Popup Container -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">×</span>
+            <h3 id="popup-title"></h3>
+            <div id="popup-body"></div>
+            <button id="popup-btn" class="popup-btn" onclick="closePopup()">ตกลง</button>
+        </div>
+    </div>
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="loader"></div>
+    </div>
+    <footer class="footer">
+        <p>© 2025 สงวนลิขสิทธิ์ | พัฒนาโดย xAI</p>
+        <div class="footer-links">
+            <a href="index.html">กลับสู่หน้าหลัก</a>
+            <a href="#">เกี่ยวกับเรา</a>
+            <a href="#">ติดต่อ</a>
+            <a href="#">นโยบายความเป็นส่วนตัว</a>
+        </div>
+    </footer>
+    <script src="sign_card.js"></script>
+</body>
+</html>
