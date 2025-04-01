@@ -93,7 +93,7 @@ function submitSignForm(event) {
                 <div class="success-details">
                     <p><strong>คำถวายพระพร:</strong> ${blessing}</p>
                     <p><strong> ด้วยเกล้าด้วยกระหม่อม ขอเดชะ</strong></P>
-                    <p><strong>ข้าพรพุทธเจ้า:</strong> ${fullname}</p>
+                    <p><strong>ข้าพระพุทธเจ้า:</strong> ${fullname}</p>
                     <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
                 </div>
             </div>
@@ -112,7 +112,8 @@ function submitSignForm(event) {
                 <img src="https://via.placeholder.com/200x150?text=ไม่มีรูปภาพ" alt="ไม่มีรูปภาพ" class="success-image">
                 <div class="success-details">
                     <p><strong>คำถวายพระพร:</strong> ${blessing}</p>
-                    <p><strong>ชื่อ-นามสกุล:</strong> ${fullname}</p>
+                    <p><strong> ด้วยเกล้าด้วยกระหม่อม ขอเดชะ</strong></P>
+                    <p><strong>ข้าพระพุทธเจ้า:</strong> ${fullname}</p>
                     <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
                 </div>
             </div>
@@ -203,8 +204,9 @@ function showSignCardForm() {
                 <select id="blessing" required>
                     <option value="">-- เลือกคำถวายพระพร --</option>
                     <option value="ขอพระองค์ทรงพระเจริญ">ขอพระองค์ทรงพระเจริญ</option>
-                    <option value="ด้วยเกล้าด้วยกระหม่อม">ด้วยเกล้าด้วยกระหม่อม</option>
-                    <option value="ขอเดชะ">ขอเดชะ</option>
+                    <option value="ขอพระองค์ทรงพระเจริญยิ่งยืนนาน">ขอพระองค์ทรงพระเจริญยิ่งยืนนาน</option>
+                    <option value="ขอพระองค์ทรงมีพระพลานามัยแข็งแรง">ขอพระองค์ทรงมีพระพลานามัยแข็งแรง</option>
+                    <option value="ขอพระองค์ทรงพระเกษมสำราญ">ขอพระองค์ทรงพระเกษมสำราญ</option>
                 </select>
             </div>
             <div class="form-group">
