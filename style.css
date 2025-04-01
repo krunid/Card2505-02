@@ -1,118 +1,57 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background-color: #f0f2f5;
-    display: flex;
-    flex-direction: column; /* ปรับให้ body เป็น column เพื่อให้ footer อยู่ด้านล่าง */
-    min-height: 100vh;
-    perspective: 1000px;
-}
-
-.container {
-    text-align: center;
-    padding: 20px;
-    flex: 1; /* ให้ container ขยายเต็มพื้นที่ที่เหลือก่อน footer */
-}
-
-h1 {
-    color: #333;
-    margin-bottom: 30px;
-}
-
-.card-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
-}
-
-.card {
-    background-color: white;
-    width: 250px;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: transform 0.4s ease;
-    transform-style: preserve-3d;
-    position: relative;
-}
-
-.card:hover {
-    transform: rotateY(20deg) rotateX(20deg) translateZ(20px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-}
-
-.card h2 {
-    color: #1a73e8;
-    margin-bottom: 10px;
-    transition: transform 0.4s ease;
-}
-
-.card p {
-    color: #666;
-    font-size: 14px;
-    transition: transform 0.4s ease;
-}
-
-.card:hover h2,
-.card:hover p {
-    transform: translateZ(10px);
-}
-
-/* สไตล์สำหรับ Footer */
-.footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    width: 100%;
-}
-
-.footer p {
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.footer-links a {
-    color: #1a73e8;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-    color: #fff;
-}
-
-@media (max-width: 768px) {
-    .card {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-    
-    .card-container {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .card:hover {
-        transform: rotateY(10deg) rotateX(10deg) translateZ(10px);
-    }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เลือกการ์ด</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">การ์ดออนไลน์</div>
+        <button class="settings-btn" onclick="openSettings()">ตั้งค่า</button>
+    </nav>
+    <div class="container">
+        <h1>เลือกการ์ดที่ต้องการ</h1>
+        <div class="card-container">
+            <div class="card" data-type="sign">
+                <h2>การ์ดลงนาม</h2>
+                <p>สำหรับลงนามในโอกาสต่างๆ</p>
+                <button class="card-button" onclick="handleCardAction('sign')">เลือกการ์ดนี้</button>
+            </div>
+            <div class="card" data-type="support">
+                <h2>การ์ดส่งกำลังใจ</h2>
+                <p>ส่งกำลังใจให้คนที่คุณห่วงใย</p>
+                <button class="card-button" onclick="handleCardAction('support')">เลือกการ์ดนี้</button>
+            </div>
+            <div class="card" data-type="greeting">
+                <h2>การ์ดอวยพรวันสำคัญ</h2>
+                <p>อวยพรในวันพิเศษ</p>
+                <button class="card-button" onclick="handleCardAction('greeting')">เลือกการ์ดนี้</button>
+            </div>
+        </div>
+    </div>
+    <!-- Popup Container -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+            <button class="popup-btn" onclick="closePopup()">ตกลง</button>
+        </div>
+    </div>
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="loader"></div>
+    </div>
+    <footer class="footer">
+        <p>© 2025 สงวนลิขสิทธิ์ | พัฒนาโดย xAI</p>
+        <div class="footer-links">
+            <a href="#">เกี่ยวกับเรา</a>
+            <a href="#">ติดต่อ</a>
+            <a href="#">นโยบายความเป็นส่วนตัว</a>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
