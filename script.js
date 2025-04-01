@@ -89,9 +89,9 @@ function submitSignForm(event) {
             <div class="success-content">
                 <img src="${photoBase64}" alt="รูปภาพที่อัพโหลด" class="success-image">
                 <div class="success-details">
-                    <p><strong>คำถวายพระพร:</strong> ${blessing}</p>
+                    <p><strong>ขอถวายพระพร:</strong> ${blessing}</p>
                     <p><strong>ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ</strong></p>
-                    <p><strong>ข้าพพระุทธเจ้า:</strong> ${fullname}</p>
+                    <p><strong>ข้าพระุทธเจ้า:</strong> ${fullname}</p>
                     <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
                 </div>
             </div>
@@ -115,9 +115,9 @@ function submitSignForm(event) {
             <div class="success-content">
                 <img src="https://via.placeholder.com/200x150?text=ไม่มีรูปภาพ" alt="ไม่มีรูปภาพ" class="success-image">
                 <div class="success-details">
-                    <p><strong>คำถวายพระพร:</strong> ${blessing}</p>
+                    <p><strong>ขอถวายพระพร:</strong> ${blessing}</p>
                     <p><strong>ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ</strong></p>
-                    <p><strong>ข้าพพระุทธเจ้า:</strong> ${fullname}</p>
+                    <p><strong>ข้าพระุทธเจ้า:</strong> ${fullname}</p>
                     <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
                 </div>
             </div>
