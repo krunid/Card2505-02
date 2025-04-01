@@ -4,7 +4,7 @@ function showPopup(title, bodyContent) {
     document.getElementById('popup-body').innerHTML = bodyContent;
     document.getElementById('popup').style.display = 'flex';
     document.getElementById('popup-btn').textContent = 'ตกลง';
-    document.getElementById('popup-btn').style.display = 'block'; // แสดงปุ่มตกลงเริ่มต้น
+    document.getElementById('popup-btn').style.display = 'block';
 }
 
 // ฟังก์ชันปิด Popup
@@ -51,7 +51,7 @@ function showSignCardForm() {
         </form>
     `;
     showPopup('การ์ดลงนาม', formHTML);
-    document.getElementById('popup-btn').style.display = 'none'; // ซ่อนปุ่มตกลงเริ่มต้น
+    document.getElementById('popup-btn').style.display = 'none';
 }
 
 // ฟังก์ชันจัดการการส่งฟอร์ม
@@ -64,15 +64,23 @@ function submitSignForm(event) {
         const fullname = document.getElementById('fullname').value;
         const affiliation = document.getElementById('affiliation').value;
 
-        console.log({
-            photo: photo ? photo.name : 'ไม่มีรูป',
-            blessing,
-            fullname,
-            affiliation
-        });
+        // สร้าง URL ชั่วคราวสำหรับแสดงรูปภาพ
+        const photoURL = photo ? URL.createObjectURL(photo) : 'https://via.placeholder.com/200x150?text=ไม่มีรูปภาพ';
+
+        // สร้างเนื้อหา popup "สำเร็จ"
+        const successHTML = `
+            <div class="success-content">
+                <img src="${photoURL}" alt="รูปภาพที่อัพโหลด" class="success-image">
+                <div class="success-details">
+                    <p><strong>คำถวายพระพร:</strong> ${blessing}</p>
+                    <p><strong>ชื่อ-นามสกุล:</strong> ${fullname}</p>
+                    <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
+                </div>
+            </div>
+        `;
 
         hideLoading();
-        showPopup('สำเร็จ', 'ข้อมูลการลงนามถูกส่งเรียบร้อยแล้ว');
+        showPopup('สำเร็จ', successHTML);
     }, 1000);
 }
 
@@ -83,7 +91,7 @@ function handleCardAction(cardType) {
         hideLoading();
         switch(cardType) {
             case 'sign':
-                showSignCardForm(); // แสดง popup ฟอร์มลงนาม
+                showSignCardForm();
                 break;
             case 'support':
                 showPopup('การ์ดส่งกำลังใจ', 'ส่งคำพูดให้กำลังใจถึงคนที่คุณรัก');
