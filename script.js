@@ -1,3 +1,50 @@
+// ฟังก์ชันสำหรับปุ่มตั้งค่า (Telegram Settings)
+function openSettings() {
+    // ดึงข้อมูล Telegram เดิมจาก localStorage (ถ้ามี)
+    const savedTelegramData = JSON.parse(localStorage.getItem('telegramSettings')) || {};
+    const telegramId = savedTelegramData.telegramId || '';
+    const telegramToken = savedTelegramData.telegramToken || '';
+
+    const settingsHTML = `
+        <form id="telegram-form" class="telegram-form" onsubmit="saveTelegramSettings(event)">
+            <div class="form-group">
+                <label for="telegram-id">Telegram ID:</label>
+                <input type="text" id="telegram-id" value="${telegramId}" placeholder="เช่น @YourTelegramID" required>
+            </div>
+            <div class="form-group">
+                <label for="telegram-token">Telegram Bot Token:</label>
+                <input type="text" id="telegram-token" value="${telegramToken}" placeholder="เช่น 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11" required>
+            </div>
+            <button type="submit" class="popup-btn">บันทึก</button>
+        </form>
+    `;
+    showPopup('ตั้งค่า Telegram', settingsHTML);
+    document.getElementById('popup-btn').style.display = 'none';
+}
+
+// ฟังก์ชันบันทึกข้อมูล Telegram
+function saveTelegramSettings(event) {
+    event.preventDefault();
+    showLoading();
+
+    const telegramId = document.getElementById('telegram-id').value;
+    const telegramToken = document.getElementById('telegram-token').value;
+
+    const telegramData = {
+        telegramId: telegramId,
+        telegramToken: telegramToken,
+        timestamp: new Date().toISOString()
+    };
+
+    // บันทึกข้อมูลลง localStorage
+    localStorage.setItem('telegramSettings', JSON.stringify(telegramData));
+
+    setTimeout(() => {
+        hideLoading();
+        showPopup('สำเร็จ', 'ตั้งค่า Telegram ถูกบันทึกเรียบร้อยแล้ว');
+    }, 1000);
+}
+
 // ฟังก์ชันแสดง Popup
 function showPopup(title, bodyContent) {
     document.getElementById('popup-title').textContent = title;
