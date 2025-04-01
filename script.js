@@ -195,14 +195,7 @@ function handleCardAction(cardType) {
     }, 1000);
 }
 
-// ฟังก์ชันสำหรับปุ่มตั้งค่า
-function openSettings() {
-    showLoading();
-    setTimeout(() => {
-        hideLoading();
-        showPopup('การตั้งค่า', 'คุณสามารถปรับแต่งธีม ฟอนต์ หรืออื่นๆ ได้ที่นี่');
-    }, 1000);
-}
+
 
 // เพิ่ม event listener สำหรับการ์ด
 document.addEventListener('DOMContentLoaded', () => {
