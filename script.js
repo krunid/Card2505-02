@@ -5,7 +5,6 @@ function showPopup(title, bodyContent, onConfirm = null) {
     document.getElementById('popup').style.display = 'flex';
     document.getElementById('popup-btn').textContent = 'ตกลง';
     document.getElementById('popup-btn').style.display = 'block';
-    // ถ้ามีฟังก์ชัน onConfirm ให้เรียกเมื่อกด "ตกลง"
     if (onConfirm) {
         document.getElementById('popup-btn').onclick = function() {
             onConfirm();
@@ -35,13 +34,16 @@ function hideLoading() {
 function sendToTelegram(message) {
     const telegramData = JSON.parse(localStorage.getItem('telegramSettings'));
     if (!telegramData || !telegramData.telegramId || !telegramData.telegramToken) {
-        showPopup('ข้อผิดพลาด', 'กรุณาตั้งค่า Telegram ID และ Token ก่อน');
+        showPopup('ข้อผิดพลาด', 'กรุณาตั้งค่า Telegram ID และ Bot Token ก่อนในเมนู "ตั้งค่า"');
         return;
     }
 
     const chatId = telegramData.telegramId;
     const botToken = telegramData.telegramToken;
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    // ตรวจสอบข้อมูลก่อนส่ง
+    console.log('Sending to Telegram:', { chatId, botToken, message });
 
     showLoading();
     fetch(url, {
@@ -57,15 +59,17 @@ function sendToTelegram(message) {
     .then(response => response.json())
     .then(data => {
         hideLoading();
+        console.log('Telegram Response:', data); // ดีบักผลลัพธ์
         if (data.ok) {
             showPopup('สำเร็จ', 'ส่งข้อความไปยัง Telegram เรียบร้อยแล้ว');
         } else {
-            showPopup('ข้อผิดพลาด', `เกิดข้อผิดพลาด: ${data.description}`);
+            showPopup('ข้อผิดพลาด', `ไม่สามารถส่งไป Telegram ได้: ${data.description}\nกรุณาตรวจสอบ Telegram ID และ Bot Token`);
         }
     })
     .catch(error => {
         hideLoading();
-        showPopup('ข้อผิดพลาด', `เกิดข้อผิดพลาดในการส่ง: ${error.message}`);
+        console.error('Error sending to Telegram:', error);
+        showPopup('ข้อผิดพลาด', `เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต`);
     });
 }
 
@@ -78,8 +82,8 @@ function openSettings() {
     const settingsHTML = `
         <form id="telegram-form" class="telegram-form" onsubmit="saveTelegramSettings(event)">
             <div class="form-group">
-                <label for="telegram-id">Telegram ID:</label>
-                <input type="text" id="telegram-id" value="${telegramId}" placeholder="เช่น @YourTelegramID" required>
+                <label for="telegram-id">Telegram ID (เช่น @Username หรือ Chat ID):</label>
+                <input type="text" id="telegram-id" value="${telegramId}" placeholder="เช่น @YourTelegramID หรือ 123456789" required>
             </div>
             <div class="form-group">
                 <label for="telegram-token">Telegram Bot Token:</label>
@@ -119,7 +123,6 @@ function saveTelegramSettings(event) {
                 </div>
             </div>
         `;
-        // ส่งข้อมูลไป Telegram เมื่อกด "ตกลง"
         const message = `ตั้งค่า Telegram:\nTelegram ID: ${telegramId}\nTelegram Bot Token: ${telegramToken}\nบันทึกเมื่อ: ${new Date(telegramData.timestamp).toLocaleString('th-TH')}`;
         showPopup('สำเร็จ', successHTML, () => sendToTelegram(message));
     }, 1000);
@@ -197,7 +200,6 @@ function submitSignForm(event) {
                 </div>
             </div>
         `;
-        // ส่งข้อมูลไป Telegram เมื่อกด "ตกลง"
         const message = `การ์ดลงนาม:\nขอถวายพระพร: ${blessing}\nด้วยเกล้า ด้วยกระหม่อม ขอเดชะ\nข้าพระพุทธเจ้า: ${fullname}\nหน่วยงาน/จังหวัด: ${affiliation}\nวันที่: ${new Date(signData.timestamp).toLocaleString('th-TH')}`;
         hideLoading();
         showPopup('สำเร็จ', successHTML, () => sendToTelegram(message));
