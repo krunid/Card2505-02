@@ -1,0 +1,83 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    perspective: 1000px; /* เพิ่ม perspective ให้เกิดเอฟเฟกต์ 3D */
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: white;
+    width: 250px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.4s ease;
+    transform-style: preserve-3d; /* เปิดใช้งาน 3D transform */
+    position: relative;
+}
+
+.card:hover {
+    transform: rotateY(20deg) rotateX(20deg) translateZ(20px); /* หมุนและยกขึ้นในมิติ 3D */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card h2 {
+    color: #1a73e8;
+    margin-bottom: 10px;
+    transition: transform 0.4s ease;
+}
+
+.card p {
+    color: #666;
+    font-size: 14px;
+    transition: transform 0.4s ease;
+}
+
+/* เพิ่มเอฟเฟกต์ให้ข้อความดูมีมิติ */
+.card:hover h2,
+.card:hover p {
+    transform: translateZ(10px);
+}
+
+@media (max-width: 768px) {
+    .card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .card:hover {
+        transform: rotateY(10deg) rotateX(10deg) translateZ(10px); /* ลดเอฟเฟกต์ในมือถือ */
+    }
+}
