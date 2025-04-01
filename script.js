@@ -1,10 +1,19 @@
 // ฟังก์ชันแสดง Popup
-function showPopup(title, bodyContent) {
+function showPopup(title, bodyContent, onConfirm = null) {
     document.getElementById('popup-title').textContent = title;
     document.getElementById('popup-body').innerHTML = bodyContent;
     document.getElementById('popup').style.display = 'flex';
     document.getElementById('popup-btn').textContent = 'ตกลง';
     document.getElementById('popup-btn').style.display = 'block';
+    // ถ้ามีฟังก์ชัน onConfirm ให้เรียกเมื่อกด "ตกลง"
+    if (onConfirm) {
+        document.getElementById('popup-btn').onclick = function() {
+            onConfirm();
+            closePopup();
+        };
+    } else {
+        document.getElementById('popup-btn').onclick = closePopup;
+    }
 }
 
 // ฟังก์ชันปิด Popup
@@ -22,9 +31,46 @@ function hideLoading() {
     document.getElementById('loading').style.display = 'none';
 }
 
+// ฟังก์ชันส่งข้อความไป Telegram
+function sendToTelegram(message) {
+    const telegramData = JSON.parse(localStorage.getItem('telegramSettings'));
+    if (!telegramData || !telegramData.telegramId || !telegramData.telegramToken) {
+        showPopup('ข้อผิดพลาด', 'กรุณาตั้งค่า Telegram ID และ Token ก่อน');
+        return;
+    }
+
+    const chatId = telegramData.telegramId;
+    const botToken = telegramData.telegramToken;
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    showLoading();
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoading();
+        if (data.ok) {
+            showPopup('สำเร็จ', 'ส่งข้อความไปยัง Telegram เรียบร้อยแล้ว');
+        } else {
+            showPopup('ข้อผิดพลาด', `เกิดข้อผิดพลาด: ${data.description}`);
+        }
+    })
+    .catch(error => {
+        hideLoading();
+        showPopup('ข้อผิดพลาด', `เกิดข้อผิดพลาดในการส่ง: ${error.message}`);
+    });
+}
+
 // ฟังก์ชันสำหรับปุ่มตั้งค่า (Telegram Settings)
 function openSettings() {
-    // ดึงข้อมูล Telegram เดิมจาก localStorage (ถ้ามี)
     const savedTelegramData = JSON.parse(localStorage.getItem('telegramSettings')) || {};
     const telegramId = savedTelegramData.telegramId || '';
     const telegramToken = savedTelegramData.telegramToken || '';
@@ -60,12 +106,10 @@ function saveTelegramSettings(event) {
         timestamp: new Date().toISOString()
     };
 
-    // บันทึกข้อมูลลง localStorage
     localStorage.setItem('telegramSettings', JSON.stringify(telegramData));
 
     setTimeout(() => {
         hideLoading();
-        // แสดงข้อมูลที่บันทึกใน popup "สำเร็จ"
         const successHTML = `
             <div class="success-content">
                 <div class="success-details">
@@ -75,7 +119,9 @@ function saveTelegramSettings(event) {
                 </div>
             </div>
         `;
-        showPopup('สำเร็จ', successHTML);
+        // ส่งข้อมูลไป Telegram เมื่อกด "ตกลง"
+        const message = `ตั้งค่า Telegram:\nTelegram ID: ${telegramId}\nTelegram Bot Token: ${telegramToken}\nบันทึกเมื่อ: ${new Date(telegramData.timestamp).toLocaleString('th-TH')}`;
+        showPopup('สำเร็จ', successHTML, () => sendToTelegram(message));
     }, 1000);
 }
 
@@ -128,7 +174,6 @@ function submitSignForm(event) {
     reader.onload = function(e) {
         const photoBase64 = e.target.result;
 
-        // บันทึกข้อมูลลง localStorage
         const signData = {
             photo: photoBase64,
             blessing: blessing,
@@ -141,7 +186,6 @@ function submitSignForm(event) {
         savedData.push(signData);
         localStorage.setItem('signCardData', JSON.stringify(savedData));
 
-        // สร้างเนื้อหา popup "สำเร็จ"
         const successHTML = `
             <div class="success-content">
                 <img src="${photoBase64}" alt="รูปภาพที่อัพโหลด" class="success-image">
@@ -153,9 +197,10 @@ function submitSignForm(event) {
                 </div>
             </div>
         `;
-
+        // ส่งข้อมูลไป Telegram เมื่อกด "ตกลง"
+        const message = `การ์ดลงนาม:\nขอถวายพระพร: ${blessing}\nด้วยเกล้า ด้วยกระหม่อม ขอเดชะ\nข้าพระพุทธเจ้า: ${fullname}\nหน่วยงาน/จังหวัด: ${affiliation}\nวันที่: ${new Date(signData.timestamp).toLocaleString('th-TH')}`;
         hideLoading();
-        showPopup('สำเร็จ', successHTML);
+        showPopup('สำเร็จ', successHTML, () => sendToTelegram(message));
     };
 
     reader.onerror = function() {
@@ -166,21 +211,6 @@ function submitSignForm(event) {
 
     if (photo) {
         reader.readAsDataURL(photo);
-    } else {
-        // กรณีไม่มีรูปภาพ (ไม่ควรเกิดขึ้นเพราะ required)
-        const successHTML = `
-            <div class="success-content">
-                <img src="https://via.placeholder.com/200x150?text=ไม่มีรูปภาพ" alt="ไม่มีรูปภาพ" class="success-image">
-                <div class="success-details">
-                    <p><strong>ขอถวายพระพร:</strong> ${blessing}</p>
-                    <p><strong>ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ</strong></p>
-                    <p><strong>ข้าพระพุทธเจ้า:</strong> ${fullname}</p>
-                    <p><strong>หน่วยงาน/จังหวัด:</strong> ${affiliation}</p>
-                </div>
-            </div>
-        `;
-        hideLoading();
-        showPopup('สำเร็จ', successHTML);
     }
 }
 
