@@ -8,15 +8,15 @@
 body {
     background-color: #f0f2f5;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column; /* ปรับให้ body เป็น column เพื่อให้ footer อยู่ด้านล่าง */
     min-height: 100vh;
-    perspective: 1000px; /* เพิ่ม perspective ให้เกิดเอฟเฟกต์ 3D */
+    perspective: 1000px;
 }
 
 .container {
     text-align: center;
     padding: 20px;
+    flex: 1; /* ให้ container ขยายเต็มพื้นที่ที่เหลือก่อน footer */
 }
 
 h1 {
@@ -39,12 +39,12 @@ h1 {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition: transform 0.4s ease;
-    transform-style: preserve-3d; /* เปิดใช้งาน 3D transform */
+    transform-style: preserve-3d;
     position: relative;
 }
 
 .card:hover {
-    transform: rotateY(20deg) rotateX(20deg) translateZ(20px); /* หมุนและยกขึ้นในมิติ 3D */
+    transform: rotateY(20deg) rotateX(20deg) translateZ(20px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
@@ -60,10 +60,40 @@ h1 {
     transition: transform 0.4s ease;
 }
 
-/* เพิ่มเอฟเฟกต์ให้ข้อความดูมีมิติ */
 .card:hover h2,
 .card:hover p {
     transform: translateZ(10px);
+}
+
+/* สไตล์สำหรับ Footer */
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+}
+
+.footer p {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #fff;
 }
 
 @media (max-width: 768px) {
@@ -78,6 +108,11 @@ h1 {
     }
     
     .card:hover {
-        transform: rotateY(10deg) rotateX(10deg) translateZ(10px); /* ลดเอฟเฟกต์ในมือถือ */
+        transform: rotateY(10deg) rotateX(10deg) translateZ(10px);
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
     }
 }
