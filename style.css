@@ -161,6 +161,7 @@ h1 {
     position: relative;
     animation: popupFadeIn 0.3s ease;
     border: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #ffffff, #f9f9f9); /* Gradient พื้นหลัง */
 }
 
 @keyframes popupFadeIn {
@@ -190,11 +191,12 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 15px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .popup-btn:hover {
     background-color: #1557b0;
+    transform: scale(1.05);
 }
 
 /* Form Styles in Popup */
@@ -221,12 +223,13 @@ h1 {
     border-radius: 5px;
     box-sizing: border-box;
     font-size: 14px;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     border-color: #1a73e8;
+    box-shadow: 0 0 5px rgba(26, 115, 232, 0.3);
     outline: none;
 }
 
