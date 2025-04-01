@@ -30,8 +30,25 @@ function hideLoading() {
     document.getElementById('loading').style.display = 'none';
 }
 
-// ฟังก์ชันส่งข้อความไป Telegram
-function sendToTelegram(message) {
+// ฟังก์ชันตรวจสอบ Bot Token
+function testBotToken(botToken) {
+    const url = `https://api.telegram.org/bot${botToken}/getMe`;
+    return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                return true;
+            } else {
+                throw new Error(data.description);
+            }
+        })
+        .catch(error => {
+            throw new Error(error.message);
+        });
+}
+
+// ฟังก์ชันส่งข้อความและรูปภาพไป Telegram
+function sendToTelegram(message, photo = null) {
     const telegramData = JSON.parse(localStorage.getItem('telegramSettings'));
     if (!telegramData || !telegramData.telegramId || !telegramData.telegramToken) {
         showPopup('ข้อผิดพลาด', 'กรุณาตั้งค่า Telegram ID และ Bot Token ก่อนในเมนู "ตั้งค่า"');
@@ -40,37 +57,65 @@ function sendToTelegram(message) {
 
     const chatId = telegramData.telegramId;
     const botToken = telegramData.telegramToken;
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-    // ตรวจสอบข้อมูลก่อนส่ง
-    console.log('Sending to Telegram:', { chatId, botToken, message });
+    // รูปภาพเริ่มต้น (ถ้าไม่มีรูปภาพจากฟอร์ม)
+    const defaultPhotoUrl = 'https://via.placeholder.com/200x150?text=Default+Image'; // รูปภาพตั้งค่าไว้
 
-    showLoading();
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: message
+    // เลือก API ตามว่ามีรูปภาพหรือไม่
+    const apiMethod = photo ? 'sendPhoto' : 'sendMessage';
+    const url = `https://api.telegram.org/bot${botToken}/${apiMethod}`;
+
+    // ตรวจสอบ Bot Token ก่อนส่ง
+    testBotToken(botToken)
+        .then(() => {
+            if (chatId.startsWith('@') && chatId.toLowerCase().includes('bot')) {
+                showPopup('ข้อผิดพลาด', 'Telegram ID ไม่ถูกต้อง: ไม่สามารถส่งข้อความไปยัง Bot อื่นได้\nกรุณาใช้ Telegram ID ของผู้ใช้ (เช่น @YourUsername หรือ Chat ID ตัวเลข) หรือกลุ่ม');
+                return;
+            }
+
+            console.log('Sending to Telegram:', { chatId, botToken, message, photo });
+
+            showLoading();
+
+            // เตรียมข้อมูลสำหรับส่ง
+            const payload = photo
+                ? {
+                    chat_id: chatId,
+                    photo: photo || defaultPhotoUrl, // ใช้รูปจากฟอร์ม หรือรูปเริ่มต้น
+                    caption: message // ข้อความจะถูกส่งเป็น caption ของรูปภาพ
+                }
+                : {
+                    chat_id: chatId,
+                    text: message
+                };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                console.log('Telegram Response:', data);
+                if (data.ok) {
+                    showPopup('สำเร็จ', 'ส่งข้อความและรูปภาพไปยัง Telegram เรียบร้อยแล้ว');
+                } else {
+                    showPopup('ข้อผิดพลาด', `ไม่สามารถส่งไป Telegram ได้: ${data.description}\nกรุณาตรวจสอบ Telegram ID และ Bot Token`);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error sending to Telegram:', error);
+                showPopup('ข้อผิดพลาด', `เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต`);
+            });
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        hideLoading();
-        console.log('Telegram Response:', data); // ดีบักผลลัพธ์
-        if (data.ok) {
-            showPopup('สำเร็จ', 'ส่งข้อความไปยัง Telegram เรียบร้อยแล้ว');
-        } else {
-            showPopup('ข้อผิดพลาด', `ไม่สามารถส่งไป Telegram ได้: ${data.description}\nกรุณาตรวจสอบ Telegram ID และ Bot Token`);
-        }
-    })
-    .catch(error => {
-        hideLoading();
-        console.error('Error sending to Telegram:', error);
-        showPopup('ข้อผิดพลาด', `เกิดข้อผิดพลาดในการเชื่อมต่อ: ${error.message}\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต`);
-    });
+        .catch(error => {
+            hideLoading();
+            showPopup('ข้อผิดพลาด', `Bot Token ไม่ถูกต้อง: ${error.message}\nกรุณาตรวจสอบ Bot Token ในเมนู "ตั้งค่า"`);
+        });
 }
 
 // ฟังก์ชันสำหรับปุ่มตั้งค่า (Telegram Settings)
@@ -104,28 +149,36 @@ function saveTelegramSettings(event) {
     const telegramId = document.getElementById('telegram-id').value;
     const telegramToken = document.getElementById('telegram-token').value;
 
-    const telegramData = {
-        telegramId: telegramId,
-        telegramToken: telegramToken,
-        timestamp: new Date().toISOString()
-    };
+    testBotToken(telegramToken)
+        .then(() => {
+            const telegramData = {
+                telegramId: telegramId,
+                telegramToken: telegramToken,
+                timestamp: new Date().toISOString()
+            };
 
-    localStorage.setItem('telegramSettings', JSON.stringify(telegramData));
+            localStorage.setItem('telegramSettings', JSON.stringify(telegramData));
 
-    setTimeout(() => {
-        hideLoading();
-        const successHTML = `
-            <div class="success-content">
-                <div class="success-details">
-                    <p><strong>Telegram ID:</strong> ${telegramId}</p>
-                    <p><strong>Telegram Bot Token:</strong> ${telegramToken}</p>
-                    <p><strong>บันทึกเมื่อ:</strong> ${new Date(telegramData.timestamp).toLocaleString('th-TH')}</p>
-                </div>
-            </div>
-        `;
-        const message = `ตั้งค่า Telegram:\nTelegram ID: ${telegramId}\nTelegram Bot Token: ${telegramToken}\nบันทึกเมื่อ: ${new Date(telegramData.timestamp).toLocaleString('th-TH')}`;
-        showPopup('สำเร็จ', successHTML, () => sendToTelegram(message));
-    }, 1000);
+            setTimeout(() => {
+                hideLoading();
+                const successHTML = `
+                    <div class="success-content">
+                        <div class="success-details">
+                            <p><strong>Telegram ID:</strong> ${telegramId}</p>
+                            <p><strong>Telegram Bot Token:</strong> ${telegramToken}</p>
+                            <p><strong>บันทึกเมื่อ:</strong> ${new Date(telegramData.timestamp).toLocaleString('th-TH')}</p>
+                        </div>
+                    </div>
+                `;
+                const message = `ตั้งค่า Telegram:\nTelegram ID: ${telegramId}\nTelegram Bot Token: ${telegramToken}\nบันทึกเมื่อ: ${new Date(telegramData.timestamp).toLocaleString('th-TH')}`;
+                // ส่งเฉพาะข้อความ ไม่มีรูปภาพ
+                showPopup('สำเร็จ', successHTML, () => sendToTelegram(message));
+            }, 1000);
+        })
+        .catch(error => {
+            hideLoading();
+            showPopup('ข้อผิดพลาด', `Bot Token ไม่ถูกต้อง: ${error.message}\nกรุณาตรวจสอบ Bot Token และลองใหม่`);
+        });
 }
 
 // ฟังก์ชันสำหรับการ์ดลงนาม
@@ -201,8 +254,9 @@ function submitSignForm(event) {
             </div>
         `;
         const message = `การ์ดลงนาม:\nขอถวายพระพร: ${blessing}\nด้วยเกล้า ด้วยกระหม่อม ขอเดชะ\nข้าพระพุทธเจ้า: ${fullname}\nหน่วยงาน/จังหวัด: ${affiliation}\nวันที่: ${new Date(signData.timestamp).toLocaleString('th-TH')}`;
+        // ส่งข้อความพร้อมรูปภาพที่อัพโหลด
         hideLoading();
-        showPopup('สำเร็จ', successHTML, () => sendToTelegram(message));
+        showPopup('สำเร็จ', successHTML, () => sendToTelegram(message, photoBase64));
     };
 
     reader.onerror = function() {
