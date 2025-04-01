@@ -38,7 +38,6 @@ function showSignCardForm() {
                     <option value="ขอพระองค์ทรงพระเจริญยิ่งยืนนาน">ขอพระองค์ทรงพระเจริญยิ่งยืนนาน</option>
                     <option value="ขอพระองค์ทรงมีพระพลานามัยแข็งแรง">ขอพระองค์ทรงมีพระพลานามัยแข็งแรง</option>
                     <option value="ขอพระองค์ทรงพระเกษมสำราญ">ขอพระองค์ทรงพระเกษมสำราญ</option>
-
                 </select>
             </div>
             <div class="form-group">
